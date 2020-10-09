@@ -24,6 +24,9 @@
             <a class="nav-link" href="/register">Sign-Up</a>
           </li>
           <%}else{%>
+            <li class="nav-item active nav-link">
+              Logged in as <%=currentUser.username%>
+            </li>
           <li class="nav-item active">
             <a class="nav-link" href="/logout">Log-Out</a>
           </li>
@@ -43,14 +46,20 @@
         </div>
         <div class="col-md-9">
           <div class="thumbnail">
-            <img class="img-responsive" src="<%= movie.image %>" alt="" />
+            <img width="100%" class="img-responsive" src="<%= movie.image %>" alt="" />
             <div class="caption-full">
               <h4><a><%= movie.name %></a></h4>
             </div>
+            <p>created by <%=movie.author.username %></p>
           </div>
-          <a class="btn btn-warning" href="">Edit</a>
-
-          <button id=" delete-form" class="btn btn-danger">Delete</button>
+         
+          
+          <%if(currentUser){if(movie.author.id.equals(currentUser._id)){%>
+            <!-- <a class="btn btn-warning" href="">Edit</a> -->
+<form action="/movies/<%=movie._id%>?_method=DELETE" method="post">
+  <button id=" delete-form" class="btn btn-danger">Delete</button>
+</form>
+<%}}%>
         </div>
       </div>
 
@@ -67,12 +76,19 @@
         <div class="row">
           <div class="col-md-12">
             <% movie.comments.forEach(function(comment) { %>
-            <p><strong><%=comment.author%></strong> - <%=comment.text%></p>
+              <div class="row">
+                <div class="col"><p><strong><%=comment.author.username%></strong> - <%=comment.text%></p></div>
+                <div class="col"><%if(currentUser){if(comment.author.id.equals(currentUser._id)){%>
+                  <form class="delete-form" action="/<%= movie._id %>/<%=comment._id%>?_method=DELETE" method="post">
+                    <button class="btn btn-xs btn-danger">Delete</button>
+                  </form>
+                  <%}}%></div>
+                
+            
+                </div>
+           
             <%})%>
-            <a class="btn btn-xs btn-warning" href="">Edit</a>
-            <form class="delete-form" action="" method="post">
-              <button class="btn btn-xs btn-danger">Delete</button>
-            </form>
+            
           </div>
         </div>
       </div>

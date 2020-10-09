@@ -25,6 +25,9 @@
             <a class="nav-link" href="/register">Sign-Up</a>
           </li>
           <%}else{%>
+            <li class="nav-item active nav-link">
+              Logged in as <%=currentUser.username%>
+            </li>
           <li class="nav-item active">
             <a class="nav-link" href="/logout">Log-Out</a>
           </li>
@@ -34,9 +37,7 @@
     </nav>
     <h1>Add New Comments for <%= movie.name %>!!</h1>
     <form method="POST" action="/movies/<%=movie._id%>/comments ">
-      <label for="author">Author: </label>
-      <input id="author" name="comment[author]" type="text" />
-      <br />
+      
       <label for="commenttext">Comment: </label>
       <input id="commenttext" name="comment[text]" type="text" />
       <br />

@@ -9,6 +9,14 @@ var movieschema = new mongoose.Schema({
       ref: "comment",
     },
   ],
+  author:{
+    id:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"user"
+  },
+  username:String,
+  },
+ 
 });
 
 module.exports = mongoose.model("movie", movieschema);

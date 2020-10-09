@@ -6,14 +6,15 @@ var movie = require("./models/movie");
 var seedDB = require("./seeds");
 var comment = require("./models/comment");
 var user = require("./models/user");
+var mymovie = require("./models/mymovies");
 var passport = require("passport");
 var LocalStrategy = require("passport-local");
-
+var methodOverride=require("method-override")
 mongoose.connect("mongodb://localhost/moviedb", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-seedDB();
+// seedDB();
 
 app.use(
   require("express-session")({
@@ -41,7 +42,7 @@ app.set("view engine", "ejs");
 app.get("/", function (req, res) {
   res.render("home");
 });
-
+app.use(methodOverride("_method"));
 app.post("/movies", isLoggedIn, function (req, res) {
   var addname = req.body.name;
   var addimage = req.body.image;
@@ -51,6 +52,10 @@ app.post("/movies", isLoggedIn, function (req, res) {
     if (err) {
       console.log("err");
     } else {
+      movies.author.id=req.user._id;
+      movies.author.username=req.user.username;
+      movies.save();
+
       res.redirect("/movies");
     }
   });
@@ -90,9 +95,63 @@ app.get("/movies/:id", function (req, res) {
 //     }
 //   });
 // });
+app.delete("/movies/:id",function(req,res){
+  movie.findByIdAndDelete(req.params.id,function(err){
+    if(err)
+    {
+      console.log("err");
+    }else{
+      res.redirect("/movies");
+    }
 
-app.get("/mymovies", function (req, res) {
-  res.render("mymovies");
+  })
+})
+app.get("/mymovies",isLoggedIn, function (req, res) {
+  mymovie.find({userid:req.user._id},function(err,mymovielist){
+if(err){
+  console.log("err");
+
+}else{
+  res.render("mymovies",{movies:mymovielist});
+}
+  })
+  
+});
+app.get("/mymovies/myadd",isLoggedIn, function (req, res) {
+  
+  res.render("myadd");
+});
+app.post("/mymovies",isLoggedIn, function (req, res) {
+  var addname = req.body.name;
+  var addimage = req.body.image;
+  var moviesobj = { name: addname, image: addimage };
+
+  mymovie.create(moviesobj, function (err, mymovies) {
+    if (err) {
+      console.log("err");
+    } else {
+      mymovies.userid=req.user._id;
+      
+      mymovies.save();
+
+      res.redirect("/mymovies");
+    }
+  });
+});
+
+app.delete("/mymovies",isLoggedIn, function (req, res) {
+ 
+  var name=req.body.name;
+
+  mymovie.findOneAndDelete({name:name,userid:req.user._id},function(err){
+    if(err){
+res.redirect("/mymovies");
+    }
+    else{
+      res.redirect("/mymovies");
+    }
+
+  })
 });
 
 app.get("/movies/:id/comments/add", isLoggedIn, function (req, res) {
@@ -114,6 +173,10 @@ app.post("/movies/:id/comments", isLoggedIn, function (req, res) {
         if (err) {
           console.log(err);
         } else {
+          comment.author.id=req.user._id;
+          comment.author.username=req.user.username;
+          comment.save();
+
           foundmovie.comments.push(comment);
           foundmovie.save();
           res.redirect("/movies/" + foundmovie._id);
@@ -121,6 +184,20 @@ app.post("/movies/:id/comments", isLoggedIn, function (req, res) {
       });
     }
   });
+});
+app.delete("/:id/:commentid",isLoggedIn, function (req, res) {
+ console.log();
+ 
+comment.findByIdAndRemove(req.params.commentid,function(err){
+  if(err){
+    console.log("err");
+
+  }
+  else{
+    res.redirect("/movies/"+req.params.id);
+  }
+})
+
 });
 
 app.get("/register", function (req, res) {

@@ -15,31 +15,31 @@ var data = [
 ];
 function seedDB() {
   movie.remove({}, function (err) {
-    if (err) {
-      console.log(err);
-    }
-    console.log("removed movies");
-    data.forEach(function (seed) {
-      movie.create(seed, function (err, data) {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("added a campground");
-          comment.create({ author: "ajay", text: "adsasdf" }, function (
-            err,
-            comment
-          ) {
-            if (err) {
-              console.log(err);
-            } else {
-              data.comments.push(comment);
-              console.log("added a comment");
-              data.save();
-            }
-          });
-        }
-      });
-    });
+    // if (err) {
+    //   console.log(err);
+    // }
+    // console.log("removed movies");
+    // data.forEach(function (seed) {
+    //   movie.create(seed, function (err, data) {
+    //     if (err) {
+    //       console.log(err);
+    //     } else {
+    //       console.log("added a campground");
+    //       comment.create({ author: "ajay", text: "adsasdf" }, function (
+    //         err,
+    //         comment
+    //       ) {
+    //         if (err) {
+    //           console.log(err);
+    //         } else {
+    //           data.comments.push(comment);
+    //           console.log("added a comment");
+    //           data.save();
+    //         }
+    //       });
+    //     }
+    //   });
+    // });
   });
 }
 
